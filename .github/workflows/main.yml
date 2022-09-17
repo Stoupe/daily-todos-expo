@@ -20,4 +20,4 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: Push to EAS
-        run: eas update --auto
+        run: npm run eas-update:ci
