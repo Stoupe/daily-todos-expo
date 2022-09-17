@@ -26,4 +26,4 @@ jobs:
       - run: npm ci
 
       - name: Push to EAS
-        run: npx eas update --platform all --non-interactive --branch=preview
+        run: npx eas update --platform all --non-interactive --auto
