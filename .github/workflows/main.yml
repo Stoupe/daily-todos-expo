@@ -19,5 +19,8 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
 
+      - name: NPM Install
+        run: npm i
+
       - name: Push to EAS
         run: npm run eas-update:ci
