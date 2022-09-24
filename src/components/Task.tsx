@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { View, Text, Pressable, GestureResponderEvent } from "react-native";
 
 export interface TaskProps {
+  id: string;
   title: string;
   goal?: number;
   numComplete?: number;
@@ -23,10 +24,10 @@ const Task = ({ title, goal, numComplete }: TaskProps) => {
         setBarWidth(width);
       });
     }
-  }, [barRef.current]);
+  }, [barRef.current, isExpanded]);
 
   const handleSliderMove = (evt: GestureResponderEvent) => {
-    if (barWidth) {
+    if (barWidth && isExpanded) {
       console.log("BAR WIDTH", barWidth);
       let percent = (evt.nativeEvent.locationX / barWidth) * 100;
       percent = Math.max(percent, 0);
@@ -36,19 +37,26 @@ const Task = ({ title, goal, numComplete }: TaskProps) => {
   };
 
   return (
-    <Pressable onPress={() => setIsExpanded((x) => x)}>
+    <Pressable
+      onPress={() => {
+        console.log("pressed");
+        setIsExpanded((x) => !x);
+      }}
+    >
       <View
-        className={`bg-slate-600 px-4 ${
-          isExpanded ? "py-8" : "py-4"
-        } m-2 rounded-lg flex flex-row items-center justify-between transition-all`}
+        className={
+          "bg-slate-800 border-slate-700 border px-4 py-4 mx-4 my-2 rounded-3xl flex justify-between"
+        }
+        style={{
+          flexDirection: isExpanded ? "column" : "row",
+          alignItems: isExpanded ? "flex-start" : "center",
+        }}
       >
-        <Text className={`text-white mr-5 ${isExpanded && "font-bold"}`}>
-          {title}
-        </Text>
+        <Text className={"text-white mr-5 text-md font-bold"}>{title}</Text>
 
-        <View className="flex w-56">
-          <View
-            className="bg-slate-500 h-4 rounded-sm"
+        <View className={`flex ${isExpanded ? "mt-2 w-full" : "w-3/5"}`}>
+          <Pressable
+            className={`${isExpanded ? "h-6" : "h-4"} rounded-lg bg-slate-500`}
             ref={barRef}
             onTouchStart={handleSliderMove}
             onTouchMove={handleSliderMove}
@@ -57,10 +65,10 @@ const Task = ({ title, goal, numComplete }: TaskProps) => {
             }}
           >
             <View
-              className="bg-slate-300 h-full w-10"
+              className="h-full rounded-lg bg-slate-300"
               style={{ width: `${percentComplete}%` }}
             />
-          </View>
+          </Pressable>
           <View className="flex flex-row justify-between mt-1">
             <Text className="text-white">0</Text>
             <Text className="text-white">25</Text>
