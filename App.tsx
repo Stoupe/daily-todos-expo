@@ -1,4 +1,5 @@
 import { PageSlider } from "@pietile-native-kit/page-slider";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { StatusBar } from "expo-status-bar";
 import { useEffect, useState } from "react";
 import {
@@ -28,10 +29,44 @@ export default function App() {
     { id: "2", title: "Situps", goal: 50, numComplete: 5 },
     { id: "3", title: "Pullups", goal: 10, numComplete: 5 },
   ]);
+
   const [modalVisible, setModalVisible] = useState(false);
   const [newTaskTitle, setNewTaskTitle] = useState("");
 
   const [selectedPage, setSelectedPage] = useState(0);
+
+  const getData = async () => {
+    try {
+      const value = await AsyncStorage.getItem("todos");
+      if (value !== null) {
+        // value previously stored
+        const parsedTodos = JSON.parse(value);
+        setTasks(parsedTodos);
+      }
+    } catch (e) {
+      // error reading value
+      console.log(e);
+    }
+  };
+
+  const setObjectValue = async (value: TaskProps[]) => {
+    try {
+      const jsonValue = JSON.stringify(value);
+      await AsyncStorage.setItem("todos", jsonValue);
+    } catch (e) {
+      // save error
+    }
+
+    console.log("Done.");
+  };
+
+  useEffect(() => {
+    getData();
+  }, []);
+
+  useEffect(() => {
+    setObjectValue(tasks);
+  }, [tasks]);
 
   return (
     <>
