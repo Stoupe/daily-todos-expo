@@ -1,3 +1,4 @@
+import { PageSlider } from "@pietile-native-kit/page-slider";
 import { StatusBar } from "expo-status-bar";
 import { useEffect, useState } from "react";
 import {
@@ -30,6 +31,8 @@ export default function App() {
   const [modalVisible, setModalVisible] = useState(false);
   const [newTaskTitle, setNewTaskTitle] = useState("");
 
+  const [selectedPage, setSelectedPage] = useState(0);
+
   return (
     <>
       <SafeAreaView className="bg-slate-900" style={{ height }}>
@@ -42,20 +45,40 @@ export default function App() {
           <Text className="text-center text-white">TODAY</Text>
         </View>
 
-        <View className="flex-1 pt-6">
-          <FlatList
-            data={tasks}
-            renderItem={({ item: task }) => (
-              <Task
-                id={task.id}
-                title={task.title}
-                goal={task.goal}
-                numComplete={task.numComplete}
-              />
-            )}
-            keyExtractor={(item) => item.id}
-          />
-        </View>
+        <PageSlider
+          selectedPage={selectedPage}
+          onSelectedPageChange={setSelectedPage}
+          onCurrentPageChange={setSelectedPage}
+        >
+          <View className="flex-1 pt-6">
+            <FlatList
+              data={tasks}
+              renderItem={({ item: task }) => (
+                <Task
+                  id={task.id}
+                  title={task.title}
+                  goal={task.goal}
+                  numComplete={task.numComplete}
+                />
+              )}
+              keyExtractor={(item) => item.id}
+            />
+          </View>
+          <View className="flex-1 pt-6">
+            <FlatList
+              data={tasks}
+              renderItem={({ item: task }) => (
+                <Task
+                  id={task.id}
+                  title={task.title}
+                  goal={task.goal}
+                  numComplete={task.numComplete}
+                />
+              )}
+              keyExtractor={(item) => item.id}
+            />
+          </View>
+        </PageSlider>
 
         <View>
           <Pressable
