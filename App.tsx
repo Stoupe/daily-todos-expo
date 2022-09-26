@@ -2,6 +2,7 @@ import { PageSlider } from "@pietile-native-kit/page-slider";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { StatusBar } from "expo-status-bar";
 import { useEffect, useState } from "react";
+import { KeyboardAvoidingView, Platform } from "react-native";
 import {
   Alert,
   Button,
@@ -99,7 +100,7 @@ export default function App() {
               keyExtractor={(item) => item.id}
             />
           </View>
-          <View className="flex-1 pt-6">
+          {/* <View className="flex-1 pt-6">
             <FlatList
               data={tasks}
               renderItem={({ item: task }) => (
@@ -112,10 +113,10 @@ export default function App() {
               )}
               keyExtractor={(item) => item.id}
             />
-          </View>
+          </View> */}
         </PageSlider>
 
-        <View>
+        {/* <View>
           <Pressable
             className="p-4 m-5 bg-slate-600 rounded-xl"
             onPress={() => {
@@ -124,48 +125,38 @@ export default function App() {
           >
             <Text className="font-bold text-center text-white">Add Task</Text>
           </Pressable>
-        </View>
+        </View> */}
 
-        <Modal
-          animationType="slide"
-          transparent={true}
-          visible={modalVisible}
-          onRequestClose={() => {
-            Alert.alert("Modal has been closed.");
-            setModalVisible(!modalVisible);
-          }}
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          className="flex flex-row m-4 mb-8"
         >
-          <View className="flex justify-end flex-1">
-            <View className=" bg-slate-800 shadow-2xl shadow-slate-500 m-2 p-5 pb-16 items-center rounded-3xl ios:rounded-[40%]">
-              <Text className="text-xl font-bold text-white">Add Task</Text>
-              <Pressable
-                className="absolute right-6 top-1"
-                onPress={() => setModalVisible(false)}
-              >
-                <Text className="text-white">close</Text>
-              </Pressable>
-
-              <TextInput
-                placeholder="Lorem ipsum..."
-                className="w-full p-4 text-white rounded-lg bg-slate-500 text-md"
-                onChangeText={(text) => setNewTaskTitle(text)}
-              />
-
-              <Pressable
-                className="p-4 m-5 bg-slate-600 rounded-xl"
-                onPress={() => {
-                  setTasks([
-                    ...tasks,
-                    { id: Math.random() + "", title: newTaskTitle },
-                  ]);
-                  setModalVisible(false);
-                }}
-              >
-                <Text className="font-bold text-white">Add</Text>
-              </Pressable>
-            </View>
-          </View>
-        </Modal>
+          <TextInput
+            placeholder="+"
+            className="flex-1 p-4 text-center text-white text-md rounded-xl bg-slate-700"
+            onChangeText={(text) => setNewTaskTitle(text)}
+          />
+          <Pressable
+            className={`${
+              newTaskTitle === "" ? "hidden" : ""
+            } p-4 ml-2 bg-slate-800 rounded-xl`}
+            onPress={() => {
+              if (newTaskTitle !== "") {
+                setTasks([
+                  ...tasks,
+                  {
+                    id: Math.random() + "",
+                    title: newTaskTitle,
+                    numComplete: 0,
+                    goal: 100,
+                  },
+                ]);
+              }
+            }}
+          >
+            <Text className="font-bold text-center text-white">Add</Text>
+          </Pressable>
+        </KeyboardAvoidingView>
       </SafeAreaView>
     </>
   );

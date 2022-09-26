@@ -27,7 +27,7 @@ const Task = ({ title, goal, numComplete }: TaskProps) => {
   }, [barRef.current, isExpanded]);
 
   const handleSliderMove = (evt: GestureResponderEvent) => {
-    if (barWidth && isExpanded) {
+    if (barWidth) {
       console.log("BAR WIDTH", barWidth);
       let percent = (evt.nativeEvent.locationX / barWidth) * 100;
       percent = Math.max(percent, 0);
@@ -38,46 +38,29 @@ const Task = ({ title, goal, numComplete }: TaskProps) => {
 
   return (
     <Pressable
-      onPress={() => {
+      onLongPress={() => {
         console.log("pressed");
         setIsExpanded((x) => !x);
       }}
+      ref={barRef}
+      onTouchStart={handleSliderMove}
+      onTouchMove={handleSliderMove}
+      onTouchEnd={() => {
+        console.log("set percent to " + percentComplete);
+      }}
+      className={
+        "h-16  rounded-[25px] mb-4 mx-4 flex flex-row justify-between items-center border border-slate-700 overflow-hidden bg-slate-800"
+      }
     >
       <View
-        className={
-          "bg-slate-800 border-slate-700 border px-4 py-4 mx-4 my-2 rounded-3xl flex justify-between"
-        }
-        style={{
-          flexDirection: isExpanded ? "column" : "row",
-          alignItems: isExpanded ? "flex-start" : "center",
-        }}
-      >
-        <Text className={"text-white mr-5 text-md font-bold"}>{title}</Text>
-
-        <View className={`flex ${isExpanded ? "mt-2 w-full" : "w-3/5"}`}>
-          <Pressable
-            className={`${isExpanded ? "h-6" : "h-4"} rounded-lg bg-slate-500`}
-            ref={barRef}
-            onTouchStart={handleSliderMove}
-            onTouchMove={handleSliderMove}
-            onTouchEnd={() => {
-              console.log("set percent to " + percentComplete);
-            }}
-          >
-            <View
-              className="h-full rounded-lg bg-slate-300"
-              style={{ width: `${percentComplete}%` }}
-            />
-          </Pressable>
-          <View className="flex flex-row justify-between mt-1">
-            <Text className="text-white">0</Text>
-            <Text className="text-white">25</Text>
-            <Text className="text-white">50</Text>
-            <Text className="text-white">75</Text>
-            <Text className="text-white">100</Text>
-          </View>
-        </View>
-      </View>
+        className="absolute h-full bg-slate-600"
+        style={{ width: `${percentComplete}%` }}
+      ></View>
+      <Text className="ml-4 font-bold text-white text-md">{title}</Text>
+      <Text className="mr-4 text-white text-md">
+        {numComplete} / {goal}
+      </Text>
+      <View className="absolute w-full h-full" />
     </Pressable>
   );
 };
